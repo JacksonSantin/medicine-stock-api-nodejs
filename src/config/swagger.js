@@ -11,7 +11,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000/api",
+        url: "https://medicine-stock.vercel.app/api",
       },
     ],
     components: {
@@ -57,7 +57,13 @@ const options = {
 const specs = swaggerJsdoc(options);
 
 const setupSwagger = (app) => {
-  app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(specs));
+  app.use(
+    "/api/docs",
+    swaggerUi.serve,
+    swaggerUi.setup(specs, {
+      explorer: true,
+    })
+  );
 };
 
 module.exports = setupSwagger;
