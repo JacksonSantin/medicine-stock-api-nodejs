@@ -56,14 +56,49 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 
+// Configuração específica para a Vercel
+const swaggerUiOptions = {
+  explorer: true,
+  swaggerOptions: {
+    url: null, // Força o uso do spec inline
+    spec: specs, // Passa o spec diretamente
+    dom_id: "#swagger-ui",
+    deepLinking: true,
+    presets: ["SwaggerUIBundle.presets.apis", "SwaggerUIStandalonePreset"],
+    plugins: ["SwaggerUIBundle.plugins.DownloadUrl"],
+    layout: "StandaloneLayout",
+  },
+  customCss: `
+    .swagger-ui .topbar { display: none }
+    .swagger-ui .scheme-container { margin: 0 0 20px 0; padding: 30px 0; }
+  `,
+  customSiteTitle: "Medic Stock API Documentation",
+  customfavIcon: "/favicon.ico",
+};
+
 const setupSwagger = (app) => {
-  app.use(
-    "/api/docs",
-    swaggerUi.serve,
-    swaggerUi.setup(specs, {
-      explorer: true,
-    })
-  );
+  // Servir a documentação JSON separadamente
+  app.get("/api/docs/swagger.json", (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.send(specs);
+  });
+
+  // Configurar o Swagger UI
+  app.use("/api/docs", swaggerUi.serve);
+
+  app.get("/api/docs", (req, res, next) => {
+    // Verificar se é uma requisição para arquivos estáticos
+    if (
+      req.originalUrl.includes(".js") ||
+      req.originalUrl.includes(".css") ||
+      req.originalUrl.includes(".png")
+    ) {
+      return swaggerUi.serve(req, res, next);
+    }
+
+    // Renderizar a página do Swagger UI
+    return swaggerUi.setup(specs, swaggerUiOptions)(req, res, next);
+  });
 };
 
 module.exports = setupSwagger;
