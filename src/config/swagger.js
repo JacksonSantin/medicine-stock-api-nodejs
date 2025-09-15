@@ -51,53 +51,73 @@ const options = {
       },
     ],
   },
-  apis: ["./src/routes/*.js"], // caminhos para os arquivos com comentários JSDoc
+  apis: ["./src/routes/*.js"],
 };
 
 const specs = swaggerJsdoc(options);
 
-// Configuração específica para a Vercel
-const swaggerUiOptions = {
-  explorer: true,
-  swaggerOptions: {
-    url: null, // Força o uso do spec inline
-    spec: specs, // Passa o spec diretamente
-    dom_id: "#swagger-ui",
-    deepLinking: true,
-    presets: ["SwaggerUIBundle.presets.apis", "SwaggerUIStandalonePreset"],
-    plugins: ["SwaggerUIBundle.plugins.DownloadUrl"],
-    layout: "StandaloneLayout",
-  },
-  customCss: `
-    .swagger-ui .topbar { display: none }
-    .swagger-ui .scheme-container { margin: 0 0 20px 0; padding: 30px 0; }
-  `,
-  customSiteTitle: "Medic Stock API Documentation",
-  customfavIcon: "/favicon.ico",
-};
-
 const setupSwagger = (app) => {
-  // Servir a documentação JSON separadamente
-  app.get("/api/docs/swagger.json", (req, res) => {
+  // Opção 1: Swagger UI tradicional
+  app.use("/api/docs", swaggerUi.serve);
+  app.get(
+    "/api/docs",
+    swaggerUi.setup(specs, {
+      explorer: true,
+      customCssUrl: [
+        "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css",
+      ],
+      customJs: [
+        "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js",
+      ],
+    })
+  );
+
+  // Opção 2: Endpoint JSON da documentação (alternativa)
+  app.get("/api/docs.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
     res.send(specs);
   });
 
-  // Configurar o Swagger UI
-  app.use("/api/docs", swaggerUi.serve);
-
-  app.get("/api/docs", (req, res, next) => {
-    // Verificar se é uma requisição para arquivos estáticos
-    if (
-      req.originalUrl.includes(".js") ||
-      req.originalUrl.includes(".css") ||
-      req.originalUrl.includes(".png")
-    ) {
-      return swaggerUi.serve(req, res, next);
-    }
-
-    // Renderizar a página do Swagger UI
-    return swaggerUi.setup(specs, swaggerUiOptions)(req, res, next);
+  // Opção 3: HTML simples como fallback
+  app.get("/api/docs-simple", (req, res) => {
+    const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Medic Stock API Documentation</title>
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui.css" />
+        <style>
+            html { box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
+            *, *:before, *:after { box-sizing: inherit; }
+            body { margin:0; background: #fafafa; }
+        </style>
+    </head>
+    <body>
+        <div id="swagger-ui"></div>
+        <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-bundle.js"></script>
+        <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-standalone-preset.js"></script>
+        <script>
+        window.onload = function() {
+          SwaggerUIBundle({
+            url: '/api/docs.json',
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            presets: [
+              SwaggerUIBundle.presets.apis,
+              SwaggerUIStandalonePreset
+            ],
+            plugins: [
+              SwaggerUIBundle.plugins.DownloadUrl
+            ],
+            layout: "StandaloneLayout"
+          });
+        };
+        </script>
+    </body>
+    </html>
+    `;
+    res.send(html);
   });
 };
 
