@@ -1,0 +1,22 @@
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+
+module.exports = function (passport) {
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      },
+      function (accessToken, refreshToken, profile, done) {
+        // Para simplicidade retornamos payload com id e email
+        const user = {
+          id: profile.id,
+          displayName: profile.displayName,
+          emails: profile.emails,
+        };
+        return done(null, user);
+      }
+    )
+  );
+};

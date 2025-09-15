@@ -1,0 +1,49 @@
+{
+  "name": "medicine-stock-api-nodejs",
+  "version": "1.0.0",
+  "description": "API para gerenciar medicamentos e estoque dos mesmos, além de poder adicionar informações relevantes sobre aquele medicamento.",
+  "keywords": [
+    "medicamento",
+    "api",
+    "remédio",
+    "estoeque",
+    "cron",
+    "vercel",
+    "mongodb"
+  ],
+  "homepage": "https://github.com/JacksonSantin/medicine-stock-api-nodejs#readme",
+  "bugs": {
+    "url": "https://github.com/JacksonSantin/medicine-stock-api-nodejs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JacksonSantin/medicine-stock-api-nodejs.git"
+  },
+  "license": "MIT",
+  "author": "Jackson Dhanyel Santin",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.9",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "express-validator": "^6.14.3",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.0",
+    "nodemailer": "^6.9.0",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
