@@ -8,7 +8,6 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/medicineController");
-const { authJwt } = require("../middlewares/authJwt");
 
 // CRUD
 /**
@@ -17,8 +16,6 @@ const { authJwt } = require("../middlewares/authJwt");
  *   post:
  *     summary: Cria um novo remédio
  *     tags: [Medicines]
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -31,7 +28,7 @@ const { authJwt } = require("../middlewares/authJwt");
  *       400:
  *         description: Erro de validação
  */
-router.post("/", authJwt, controller.create);
+router.post("/", controller.create);
 
 /**
  * @swagger
@@ -39,8 +36,6 @@ router.post("/", authJwt, controller.create);
  *   get:
  *     summary: Lista todos os remédios
  *     tags: [Medicines]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: q
@@ -77,7 +72,7 @@ router.post("/", authJwt, controller.create);
  *                     qtd_embalagem:
  *                       type: integer
  */
-router.get("/", authJwt, controller.list);
+router.get("/", controller.list);
 
 /**
  * @swagger
@@ -85,8 +80,6 @@ router.get("/", authJwt, controller.list);
  *   get:
  *     summary: Obtém um remédio pelo ID
  *     tags: [Medicines]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -110,7 +103,7 @@ router.get("/", authJwt, controller.list);
  *       404:
  *         description: Remédio não encontrado
  */
-router.get("/:id", authJwt, controller.get);
+router.get("/:id", controller.get);
 
 /**
  * @swagger
@@ -118,8 +111,6 @@ router.get("/:id", authJwt, controller.get);
  *   put:
  *     summary: Atualiza um remédio
  *     tags: [Medicines]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -139,7 +130,7 @@ router.get("/:id", authJwt, controller.get);
  *       404:
  *         description: Remédio não encontrado
  */
-router.put("/:id", authJwt, controller.update);
+router.put("/:id", controller.update);
 
 /**
  * @swagger
@@ -147,8 +138,6 @@ router.put("/:id", authJwt, controller.update);
  *   delete:
  *     summary: Remove um remédio
  *     tags: [Medicines]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -162,15 +151,13 @@ router.put("/:id", authJwt, controller.update);
  *       404:
  *         description: Remédio não encontrado
  */
-router.delete("/:id", authJwt, controller.remove);
+router.delete("/:id", controller.remove);
 
 /**
  * @swagger
  * /medicines/suggest-times:
  *   post:
  *     summary: Sugere horários para tomar o remédio
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -198,7 +185,7 @@ router.delete("/:id", authJwt, controller.remove);
  */
 // suggestion endpoint (no auth required or optional)
 const { suggestTimes } = require("../services/scheduleService");
-router.post("/suggest-times", authJwt, async (req, res) => {
+router.post("/suggest-times", async (req, res) => {
   // body: { mode: 'interval'|'times'|'times-per-day', value: ... }
   try {
     const result = suggestTimes(req.body);

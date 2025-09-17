@@ -1,6 +1,6 @@
 # Medic Stock API
 
-API para gerenciamento de estoque de remédios, com alertas de validade, sugestões de horários e login via Google OAuth.
+API para gerenciamento de estoque de remédios, com alertas de validade e sugestões de horários.
 
 ---
 
@@ -9,7 +9,6 @@ API para gerenciamento de estoque de remédios, com alertas de validade, sugest�
 - Node.js
 - Express.js
 - MongoDB (Mongoose)
-- Passport.js (Google OAuth)
 - Day.js
 - Nodemailer (notificações)
 - Swagger (documentação)
@@ -39,14 +38,6 @@ npm install
 PORT=3000
 MONGO_URI=<sua-mongo-uri>
 
-JWT_SECRET=<sua-chave-secreta>
-
-# Google OAuth
-GOOGLE_CLIENT_ID=<client-id>
-GOOGLE_CLIENT_SECRET=<client-secret>
-GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
-CLIENT_URL=<url-do-front>
-
 # SMTP (opcional)
 SMTP_HOST=smtp.exemplo.com
 SMTP_PORT=587
@@ -72,7 +63,6 @@ npm start
 
 ## 📌 Endpoints principais
 
-- `POST /api/auth/google` → Login Google OAuth
 - `GET /api/medicines` → Listar remédios
 - `POST /api/medicines` → Criar remédio
 - `GET /api/medicines/:id` → Detalhes de um remédio
@@ -93,4 +83,3 @@ npm start
 ## 📝 Observações
 
 - Para deploy no Vercel, use `vercel.json` configurado para apontar para `server.js`.
-- Rotas que exigem autenticação usam JWT gerado pelo Passport (Google OAuth).
